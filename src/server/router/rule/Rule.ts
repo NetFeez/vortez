@@ -15,7 +15,7 @@ import Tracker from '../Tracker.js';
 
 export abstract class Rule<Content extends any> {
     protected static readonly MULTI_SLASH_REPLACER = /\/+/g;
-    protected static readonly RULE_NORMALIZER = /^\/?(.+?)\/?$/;
+    protected static readonly RULE_NORMALIZER = /^\/?(.*?)\/?$/;
 
     public [RULE.BASE] = true;
 
@@ -105,6 +105,7 @@ export abstract class Rule<Content extends any> {
 
         for (let index = 0; index < zones.length; index++) {
             const zone = zones[index];
+            if (zone == '') continue;
 
             if (zone == '*') {
                 const isLast = index == (zones.length - 1);
