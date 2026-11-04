@@ -11,13 +11,21 @@ import Tracker from "./Tracker.js";
 import ServerError from '../ServerError.js';
 
 export class Gate {
+    private readonly logger: LoggerManager = LoggerManager.getInstance();
+    private proxy: boolean = false;
+
     public constructor(
         private readonly router: Router,
-        private readonly logger = LoggerManager.getInstance()
-    ) { }
+        options: Gate.Options = {}
+    ) {
+        this.proxy = options.proxy ?? false;
+        this.logger = options.logger ?? LoggerManager.getInstance();
+    }
 
     public async requestManager(HttpRequest: HTTP.IncomingMessage, HttpResponse: HTTP.ServerResponse): Promise<void> {
-        const request = new Request(HttpRequest);
+        const request = new Request(HttpRequest, {
+            allowForwardedIP: this.proxy,
+        });
         const response = new Response(HttpResponse);
         const tracker = new Tracker(request, response);
         this.logger.request.log(request.ip, request.method, request.url);
@@ -52,3 +60,12 @@ export class Gate {
         }
     }
 }
+
+export namespace Gate {
+    export interface Options {
+        proxy?: boolean;
+        logger?: LoggerManager;
+    }
+}
+
+export default Gate;

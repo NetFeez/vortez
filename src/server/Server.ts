@@ -49,13 +49,16 @@ export class Server {
 	 * @param sslOptions - The SSL configuration.
 	 */
 	public constructor(config: Server.Config | Server.Config.toProcess = {}) {
-		this.config = config instanceof Server.Config ? config : new Server.Config(config);
-		this.router = new Server.Router(this.config.get('routing.algorithm'));
-		this.gate = new Gate(this.router);
 		this.HttpServer = null;
 		this.HttpsServer = null;
 		this.protocol = null;
 		this.logger = _LoggerManager.getInstance();
+		this.config = config instanceof Server.Config ? config : new Server.Config(config);
+		this.router = new Server.Router(this.config.get('routing.algorithm'));
+		this.gate = new Gate(this.router, {
+			logger: this.logger,
+			proxy: this.config.get('routing.proxy')
+		});
 		this.router.folder('/vortez:global', Path.relativeToMe(import.meta, '../../global'));
 	}
 	/**

@@ -26,7 +26,8 @@ export const SCHEMA_SSL = new Schema({ type: 'object', properties: {
 }});
 
 export const SCHEMA_ROUTING = new Schema({ type: 'object', properties: {
-    algorithm: { type: 'string', enum: ['FIFO', 'Tree'], default: 'FIFO' }
+    algorithm: { type: 'string', enum: ['FIFO', 'Tree'], default: 'FIFO' },
+    proxy: { type: 'boolean', default: false }
 }});
 
 export const SCHEMA_HANDLER = Schema.fromObject({

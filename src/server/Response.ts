@@ -65,9 +65,7 @@ export class Response {
 
 	/**
 	 * Creates the `NetFeez-Labs/Server` response format.
-	 * @param request - The request received by the server.
 	 * @param httpResponse - The response to be sent by the server.
-	 * @param templates - The list of server response templates.
 	 */
 	public constructor(httpResponse: HTTP.ServerResponse) {
 		this.httpResponse = httpResponse;
