@@ -75,7 +75,7 @@ export class Request {
 	}
 	private normalizeUrl(url: string): string {
 		url = url.split('?')[0];
-		url = decodeURI(url.endsWith('/') ? url : url + '/');
+		url = url.endsWith('/') ? url : url + '/';
 		url = url.length > 1 && url.endsWith('/') ? url.slice(0, -1) : url;
 		url = url.startsWith('/') ? url : '/' + url;
 		return url;
