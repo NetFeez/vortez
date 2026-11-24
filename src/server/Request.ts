@@ -118,13 +118,13 @@ export class Request {
 	}
 
 	/**
-	 * Normalizes the URL by removing query parameters, decoding it, and ensuring it has a leading slash.
+	 * Normalizes the URL by removing query parameters and ensuring it has a leading slash.
 	 * @param url - The URL to normalize.
 	 * @returns The normalized URL.
 	 */
 	private normalizeUrl(url: string): string {
 		url = url.split('?')[0];
-		url = decodeURI(url.endsWith('/') ? url : url + '/');
+		url = url.endsWith('/') ? url : url + '/';
 		url = url.length > 1 && url.endsWith('/') ? url.slice(0, -1) : url;
 		url = url.startsWith('/') ? url : '/' + url;
 		return url;
