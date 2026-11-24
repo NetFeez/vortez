@@ -51,8 +51,14 @@ export abstract class Rule<T extends any> {
      */
     public getParams(path: string): Rule.ruleParams {
         const math = this._expression.exec(path);
-        if (!math) return {};
-        return { ...math.groups };
+        if (!math?.groups) return {};
+        const params: Rule.ruleParams = {};
+        for (const [name, value] of Object.entries(math.groups)) {
+            if (name === '$surplus') { params[name] = value ?? ''; continue; }
+            if (value === undefined) continue;
+            params[name] = Rule.decodeParam(value);
+        }
+        return params;
     }
     /**
      * Extracts the surplus URL using the rule's expression.
@@ -61,6 +67,15 @@ export abstract class Rule<T extends any> {
     public getSurplus(url: string): string {
         const { $surplus = '' } = this.getParams(url);
         return $surplus;
+    }
+    /**
+     * Decodes a URL parameter value.
+     * @param value - The parameter value to decode.
+     * @returns The decoded parameter value.
+     */
+    protected static decodeParam(value: string): string {
+        try { return decodeURIComponent(value); }
+        catch { return value; }
     }
     /**
      * Creates a regular expression for route matching.
