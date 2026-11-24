@@ -76,7 +76,14 @@ export abstract class Rule<Content extends any> {
      */
     public params(path: string): Rule.ruleParams {
         const math = this.vExpression.exec(path);
-        return math?.groups ? { ...math.groups } : {};
+        if (!math?.groups) return {};
+        const params: Rule.ruleParams = {};
+        for (const [name, value] of Object.entries(math.groups)) {
+            if (name === '$surplus') { params[name] = value ?? ''; continue; }
+            if (value === undefined) continue;
+            params[name] = Rule.decodeParam(value);
+        }
+        return params;
     }
     /**
      * Gets the surplus from the URL based on the routing rule.
@@ -88,12 +95,24 @@ export abstract class Rule<Content extends any> {
         const { $surplus = '' } = this.params(url);
         return $surplus;
     }
+
+    /**
+     * Decodes a URL parameter value.
+     * @param value - The parameter value to decode.
+     * @returns The decoded parameter value.
+     */
+    protected static decodeParam(value: string): string {
+        try { return decodeURIComponent(value); }
+        catch { return value; }
+    }
+
     protected static normalize(template: string): string {
         template = template
             .replace(this.MULTI_SLASH_REPLACER, '/')
             .replace(this.RULE_NORMALIZER, '/$1');
         return template;
     }
+
     protected static create(template: string): RegExp {
         const validators = {
             paramRequired: /^(?:\:|\$)(?<param>(?!\$).+)$/,
